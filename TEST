@@ -1,0 +1,15 @@
+function sendMessage(token,message,chat_id) {
+  UrlFetchApp.fetch("https://api.telegram.org/bot" + token + "/sendMessage?text=" + encodeURIComponent(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
+  }
+function sendNotify(){
+var token = "6319274507:AAFpnZW-Cuu_av8UCNcSXMs21tt_EmNqXPI";
+var telegramUrl = "https://api.telegram.org/bot" + token;
+var chatId = "-4112675227"
+
+//var message = "Im Bot"
+var ss = SpreadsheetApp.getActiveSpreadsheet();
+var worksheet = ss.getSheetByName("Task")
+var message = worksheet.getRange("A2").getValue()
+console.log(message)
+sendMessage(token,message,chatId)
+}
