@@ -1,0 +1,53 @@
+// 2. Trigger edit
+function onEdit(e) {
+  var myRange = SpreadsheetApp.getActiveSpreadsheet()
+    .getSheetByName("Task")
+    .getRange("A2:J"); // vùng check trigger
+  var row = e.range.getRow(); // lấy dòng đang bị edit
+  var col = e.range.getColumn(); // lấy cột đang bị edit
+
+  // 2.1 set cột đang bị edit để thực thi trigger or có thể để nguyên vùng 'A2:J', ở đây đang set cột 10 "Trạng thái CV"
+  if (
+    col >= myRange.getColumn() && // cột đang bị edit >= cột đầu tiên của  chứa dữ liệu
+    col <= myRange.getLastColumn() && // cột đang bị edit <= cột cuối cùng của  chứa dữ liệu
+    row >= myRange.getRow() &&  // dòng đang bị edit >= dòng đầu tiên của  chứa dữ liệu
+    row <= myRange.getLastRow() // dòng đang bị edit <= dòng cuối cùng của  chứa dữ liệu
+  ) {
+    if (col == 11) {
+      var data_info = SpreadsheetApp.getActiveSheet()
+        .getRange(row, 1, 1, 11)
+        .getValues();
+
+      data_info[0][0] != "" ? sendTelegramNotification(data_info) : "";
+      //sent_Mail(data_info)
+    }
+  } else {
+    return;
+  }
+}
+
+// 3. Gửi thông báo đến telegram.
+function sendTelegramNotification(data) {
+ 
+  var ref = "";
+  ref += "&#x1F4DD   <strong> ĐỀ NGHỊ PHÊ DUYỆT CÔNG VIỆC</strong> \n";
+  ref += "------------------------------------------------------------- \n  \n";
+  ref +="<code> &#x1F4C5 " + Utilities.formatDate(new Date(), "GMT+7", "dd/MM/yyyy hh:mm:ss") + "</code> \n \n ";
+  ref += "<em> &#x1F538 Huyền Phương đã làm xong công việc</em>:  <code>" + data[0][1] + "</code> \n";
+  ref += "&#x2705 anh Trung vào kiểm tra ngay nhé &#x2705 \n\n";
+  ref += "------------------------------------------------------------ ";
+
+  var body = ref;
+
+  var link_fetch =
+    "https://api.telegram.org/bot" +
+    botSecret +
+    "/sendMessage?text=" +
+    encodeURIComponent(body) +
+    "&chat_id=" +
+    chatId +
+    "&parse_mode=HTML";
+
+  // Thực thi gửi tin nhắn tới tele
+  UrlFetchApp.fetch(link_fetch);
+}
